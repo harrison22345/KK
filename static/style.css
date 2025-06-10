@@ -1,0 +1,485 @@
+/* Общие стили */
+body {
+    font-family: 'Noto Sans JP', sans-serif; /* Более легкий шрифт */
+    margin: 0;
+    padding: 0;
+    background-color: #fefefe; /* Чистый белый фон */
+    color: #444; /* Темно-серый текст */
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased; /* Сглаживание шрифтов */
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+#logo {
+    max-height: 75px; /* или другая желаемая высота */
+    vertical-align: middle;
+}
+
+.container {
+    max-width: 1100px; /* Немного уже */
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+h1, h2, h3 {
+    color: #333; /* Темно-серый */
+    font-weight: 600;
+    margin-bottom: 0.8rem; /* Меньше отступ */
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: 2.2rem; /* Меньше */
+}
+
+h2 {
+    font-size: 1.8rem; /* Меньше */
+}
+
+h3 {
+    font-size: 1.3rem; /* Меньше */
+}
+
+a {
+    color: #4285f4; /* Синий */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #1a73e8; /* Темно-синий */
+    text-decoration: underline; /* Подчеркивание при наведении */
+}
+
+.button {
+    display: inline-block;
+    background-color: #4285f4; /* Синий */
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 4px; /* Меньше закругление */
+    transition: background-color 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-weight: 400; /* Меньше вес */
+    font-size: 0.9rem; /* Меньше размер */
+}
+
+.button:hover {
+    background-color: #1a73e8; /* Темно-синий */
+    text-decoration: none;
+}
+
+/* Стили шапки */
+header {
+    background-color: #fff;
+    color: #333;
+    padding: 15px 0; /* Меньше отступ */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* Меньше тень */
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+header h1 {
+    margin: 0;
+    float: left;
+    font-family: 'Kaisei HarunoUmi', serif;
+    font-size: 2.2rem; /* Меньше */
+}
+
+nav {
+    float: right;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+nav ul li {
+    margin-left: 25px; /* Меньше отступ */
+}
+
+nav a {
+    color: #333;
+    font-weight: 400; /* Меньше вес */
+}
+
+/* Стили секции Hero */
+#hero {
+    background-color: #f5f5f5; /* Светло-серый фон */
+    padding: 120px 0; /* Меньше отступ */
+    text-align: center;
+    background-image: url("/static/img/hero.jpg"); /* Изменено: путь к картинке */
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+#hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3); /* Еще меньше затемнение */
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+#hero h2,
+#hero p {
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4); /* Меньше тень */
+}
+
+#hero h2 {
+    font-size: 2.5rem; /* Меньше */
+    margin-bottom: 0.8rem; /* Меньше отступ */
+}
+
+#hero p {
+    font-size: 1.1rem; /* Меньше */
+    margin-bottom: 1.5rem; /* Меньше отступ */
+}
+
+/* Стили секции "О нас" */
+#about {
+    padding: 60px 0; /* Меньше отступ */
+}
+
+#about ul {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+#about ul li::before {
+    content: "•";
+    color: #4285f4; /* Синий */
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+}
+
+/* Стили секции "Отзывы" */
+#reviews {
+    background-color: #fff; /* Белый фон */
+    padding: 60px 0; /* Меньше отступ */
+}
+
+.review-slider {
+    display: flex;
+    overflow-x: auto;
+    gap: 25px; /* Меньше отступ */
+    padding-bottom: 25px; /* Меньше отступ */
+    scrollbar-width: thin;
+    scrollbar-color: #4285f4 #fff; /* Синий */
+}
+
+.review-slider::-webkit-scrollbar {
+    width: 6px; /* Тоньше */
+}
+
+.review-slider::-webkit-scrollbar-track {
+    background: #fff; /* Белый */
+}
+
+.review-slider::-webkit-scrollbar-thumb {
+    background-color: #4285f4; /* Синий */
+    border-radius: 3px; /* Меньше закругление */
+}
+
+.review {
+    background-color: #f8f8f8; /* Светло-серый */
+    border-radius: 6px; /* Меньше закругление */
+    padding: 25px; /* Меньше отступ */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); /* Меньше тень */
+    min-width: 280px; /* Меньше */
+    border-left: 4px solid #4285f4; /* Синий */
+}
+
+.author {
+    font-style: italic;
+    text-align: right;
+    color: #666; /* Светлее */
+    margin-top: 8px; /* Меньше отступ */
+}
+
+/* Стили секции "Медиа" */
+#media {
+    padding: 60px 0; /* Меньше отступ */
+}
+
+.media-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px; /* Меньше отступ */
+    justify-content: center;
+}
+
+.media-item {
+    width: 280px; /* Меньше */
+    border-radius: 6px; /* Меньше закругление */
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); /* Меньше тень */
+    transition: transform 0.3s ease;
+}
+
+.media-item:hover {
+    transform: translateY(-3px); /* Меньше */
+}
+
+.media-item img,
+.media-item video {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Стили для секции исполнителей */
+#artists-section {
+    padding: 60px 0;
+    background-color: #f9f9f9; /* Немного другой фон для выделения */
+}
+
+.artists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Адаптивная сетка */
+    gap: 25px;
+}
+
+.artist-card {
+    background-color: #fff;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.artist-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.artist-card img {
+    width: 120px; /* Размер фото профиля */
+    height: 120px;
+    border-radius: 50%; /* Круглое фото */
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+/* Стили для карусели медиа на главной странице */
+.media-carousel-container {
+    position: relative;
+    max-width: 800px; /* или другая ширина по вашему выбору */
+    margin: 20px auto;
+    overflow: hidden; /* Скрываем все, что выходит за пределы */
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.media-carousel-slider {
+    display: flex; /* Используем flex для элементов карусели, но будем показывать по одному */
+    transition: transform 0.5s ease-in-out; /* Плавный переход (если бы мы двигали весь слайдер) */
+    /* В текущей реализации JS мы просто меняем display: none/block, так что transform не используется */
+}
+
+.media-carousel-item {
+    min-width: 100%; /* Каждый элемент занимает всю ширину контейнера */
+    box-sizing: border-box;
+}
+
+.media-carousel-item img,
+.media-carousel-item video {
+    width: 100%;
+    height: auto; /* Автоматическая высота для сохранения пропорций */
+    max-height: 500px; /* Ограничение максимальной высоты, чтобы не было слишком большим */
+    display: block;
+    object-fit: contain; /* Чтобы изображение/видео помещалось полностью, не обрезаясь */
+}
+
+.carousel-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 20px;
+    z-index: 10;
+}
+
+.carousel-control.prev {
+    left: 10px;
+}
+
+.carousel-control.next {
+    right: 10px;
+}
+
+/* Стили подвала */
+footer {
+    background-color: #f5f5f5; /* Светло-серый */
+    color: #666; /* Светлее */
+    padding: 25px 0; /* Меньше отступ */
+    text-align: center;
+}
+
+/* Clearfix для обтекания */
+.container::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Стили для личного кабинета */
+#dashboard {
+    padding: 60px 0; /* Меньше отступ */
+}
+
+#user-info {
+    margin-bottom: 30px; /* Меньше отступ */
+}
+
+.track-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px; /* Меньше отступ */
+    border-radius: 6px; /* Меньше закругление */
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); /* Меньше тень */
+}
+
+.track-table th,
+.track-table td {
+    border: none;
+    padding: 10px 12px; /* Меньше отступ */
+    text-align: left;
+    background-color: #fff;
+}
+
+.track-table th {
+    background-color: #f5f5f5; /* Светло-серый */
+    font-weight: 500; /* Меньше вес */
+}
+
+.track-table tbody tr:nth-child(even) {
+    background-color: #f8f8f8;
+}
+
+#upload-form-container {
+    margin-top: 25px; /* Меньше отступ */
+}
+
+#upload-form {
+    background-color: #f8f8f8; /* Светло-серый */
+    padding: 25px; /* Меньше отступ */
+    border-radius: 6px; /* Меньше закругление */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); /* Меньше тень */
+}
+
+/* Стили для панели администратора */
+#admin-dashboard {
+    padding: 60px 0; /* Меньше отступ */
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px; /* Меньше отступ */
+    border-radius: 6px; /* Меньше закругление */
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); /* Меньше тень */
+}
+
+.admin-table th,
+.admin-table td {
+    border: none;
+    padding: 10px 12px; /* Меньше отступ */
+    text-align: left;
+    background-color: #fff;
+}
+
+.admin-table th {
+    background-color: #f5f5f5; /* Светло-серый */
+    font-weight: 500; /* Меньше вес */
+}
+
+.admin-table tbody tr:nth-child(even) {
+    background-color: #f8f8f8;
+}
+
+/* Стили для форм */
+.form-group {
+    margin-bottom: 15px; /* Меньше отступ */
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 4px; /* Меньше отступ */
+    font-weight: 400; /* Меньше вес */
+    font-size: 0.9rem; /* Меньше размер */
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px; /* Меньше отступ */
+    border: 1px solid #ddd;
+    border-radius: 4px; /* Меньше закругление */
+    box-sizing: border-box;
+    font-size: 0.9rem; /* Меньше размер */
+}
+
+/* Стили для управления медиа в админке */
+.media-gallery-admin {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.media-item-admin {
+    width: 200px; /* Размер превью */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.media-item-admin img,
+.media-item-admin video {
+    max-width: 100%;
+    height: auto;
+    max-height: 150px; /* Ограничение высоты превью */
+    margin-bottom: 10px;
+}
+
+/* Добавьте это в ваш style.css или в <style> тег в KatarEra.html */
+.artist-card .artist-followers {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+    text-align: center; /* или left, как вам больше нравится */
+}
+
+/* Стили для шрифтов */
+@import url('https://fonts.googleapis.com/css2?family=Kaisei+HarunoUmi:wght@400&family=Noto+Sans+JP:wght@400;500;600&display=swap');

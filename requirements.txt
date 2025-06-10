@@ -1,0 +1,8 @@
+Flask
+bcrypt
+Flask-Mail
+itsdangerous
+mutagen
+gunicorn  # WSGI сервер для продакшена
+Werkzeug
+

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подписчики - KatarEra</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .user-list-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .user-item:last-child {
+            border-bottom: none;
+        }
+        .user-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+        .user-item a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %} {# Предполагается, что у вас есть общий header.html #}
+    <div class="user-list-container">
+        <h2>Подписчики пользователя {{ viewing_user_name }}:</h2>
+        {% if followers %}
+            {% for user in followers %}
+            <div class="user-item">
+                <img src="{{ user.profile_picture_url }}" alt="{{ user.name }}">
+                <a href="{{ url_for('dashboard_page') }}?view_user_id={{ user.id }}">{{ user.name }}</a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>У этого пользователя пока нет подписчиков.</p>
+        {% endif %}
+    </div>
+    {% include 'footer.html' %} {# Предполагается, что у вас есть общий footer.html #}
+</body>
+</html>

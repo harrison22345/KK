@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KatarEra - Ваша музыкальная вселенная</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/"><img src="/static/img/logo.png" alt="KatarEra" id="logo"></a>
+            <nav>
+                <ul>
+                    <li><a href="#about">О нас</a></li>
+                    <li><a href="#reviews">Отзывы</a></li>
+                    <li><a href="#artists-section">Исполнители</a></li>
+                    <li><a href="#media">Медиа</a></li>
+                    <li><a href="/login" id="login-link">Вход</a></li>
+                    <li><a href="/register" id="register-link">Регистрация</a></li>
+                    <li><a href="/dashboard" id="dashboard-link" style="display: none;">Личный кабинет</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <style>
+        #logo {
+            max-height: 75px; 
+            vertical-align: middle;
+        }
+        .artist-card .artist-followers { /* Стили для подписчиков */
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>    
+
+    <section id="hero">
+        <div class="hero-content">
+            <h2>Откройте мир новой музыки с KatarEra</h2>
+            <p>Платформа для независимых исполнителей и ценителей уникальных треков.</p>
+            <a href="/register" class="button">Присоединиться</a>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="container">
+            <h2>О KatarEra</h2>
+            <p>KatarEra — это не просто музыкальный сервис, это сообщество, где каждый может найти что-то своё. Мы предоставляем площадку для талантливых музыкантов, чтобы они могли поделиться своим творчеством с миром, и для слушателей, чтобы они открывали новые имена и жанры.</p>
+            <h3>Наши преимущества:</h3>
+            <ul>
+                <li>Эксклюзивный контент от независимых артистов.</li>
+                <li>Удобный интерфейс для загрузки и прослушивания музыки.</li>
+                <li>Поддержка различных жанров и направлений.</li>
+                <li>Возможность оставлять отзывы и формировать плейлисты.</li>
+                <li>Регулярные обновления и новые функции.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="reviews">
+        <div class="container">
+            <h2>Отзывы наших пользователей</h2>
+            <!-- Форма добавления отзыва (изначально скрыта, если пользователь не вошел) -->
+            <div id="add-review-form-container" style="display: none; margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9;">
+                <h3>Оставить отзыв</h3>
+                <form id="review-form">
+                    <textarea id="review-text" placeholder="Напишите ваш отзыв здесь..." rows="4" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" required></textarea>
+                    <button type="submit" class="button" style="padding: 10px 15px;">Отправить отзыв</button>
+                </form>
+                <p id="review-message" style="margin-top: 10px; font-size: 0.9em;"></p>
+            </div>
+            <div class="review-slider" id="review-slider-container">
+                <!-- Отзывы будут загружены сюда -->
+            </div>
+        </div>
+    </section>
+
+    <section id="artists-section">
+        <div class="container">
+            <h2>Наши исполнители</h2>
+            <div class="artists-grid" id="artists-grid-container">
+                <!-- Карточки исполнителей будут загружены сюда -->
+            </div>
+        </div>
+    </section>
+    <section id="media">
+        <div class="container">
+            <h2>Медиа</h2>
+            <div class="media-carousel-container">
+                <div class="media-carousel-slider" id="media-carousel-slider">
+                    <!-- Медиа элементы (фото/видео) будут загружены сюда -->
+                </div>
+                <button class="carousel-control prev" id="media-prev">&#10094;</button>
+                <button class="carousel-control next" id="media-next">&#10095;</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 KatarEra. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Проверка статуса входа пользователя
+        const loginLink = document.getElementById('login-link');
+        const registerLink = document.getElementById('register-link');
+        const dashboardLink = document.getElementById('dashboard-link');
+        const addReviewFormContainer = document.getElementById('add-review-form-container');
+        const reviewForm = document.getElementById('review-form');
+        const reviewTextarea = document.getElementById('review-text');
+        const reviewMessage = document.getElementById('review-message');
+
+        const currentUserId = localStorage.getItem('user_id');
+        const isAdmin = localStorage.getItem('is_admin'); // Получаем статус администратора
+
+        if (currentUserId) {
+            loginLink.style.display = 'none';
+            registerLink.style.display = 'none';
+            dashboardLink.style.display = 'inline-block'; // или 'block'
+
+            if (isAdmin === '1') { // '1' если администратор, '0' или null если нет
+                dashboardLink.href = '/admin';
+            } else {
+                dashboardLink.href = '/dashboard';
+            }
+
+            if (addReviewFormContainer) {
+                addReviewFormContainer.style.display = 'block';
+            }
+        } else {
+            loginLink.style.display = 'inline-block';
+            registerLink.style.display = 'inline-block';
+            dashboardLink.style.display = 'none';
+            dashboardLink.href = '/dashboard'; // Сброс на случай выхода из системы админа
+            if (addReviewFormContainer) {
+                addReviewFormContainer.style.display = 'none';
+            }
+        }
+
+        // Загрузка отзывов
+        const reviewSliderContainer = document.getElementById('review-slider-container');
+
+        function loadReviews() {
+            fetch('/reviews')
+                .then(response => response.json())
+                .then(reviews => {
+                    reviewSliderContainer.innerHTML = ''; // Очищаем предыдущие отзывы
+                    if (reviews.length === 0) {
+                        reviewSliderContainer.innerHTML = '<p>Отзывов пока нет.</p>';
+                        return;
+                    }
+                    reviews.forEach(review => {
+                        const reviewDiv = document.createElement('div');
+                        reviewDiv.classList.add('review');
+                        // Используем имя пользователя, если оно есть
+                        const authorName = review.user_name || `Пользователь ID: ${review.user_id}`;
+                        reviewDiv.innerHTML = `
+                            <p>"${review.text}"</p>
+                            <p class="author">- ${authorName}</p>
+                        `;
+                        reviewSliderContainer.appendChild(reviewDiv);
+                    });
+                })
+                .catch(error => {
+                    console.error('Ошибка при загрузке отзывов:', error);
+                    reviewSliderContainer.innerHTML = '<p>Не удалось загрузить отзывы.</p>';
+                });
+        }
+
+        // Первоначальная загрузка отзывов
+        loadReviews();
+
+        // Обработка отправки формы отзыва
+        if (reviewForm) {
+            reviewForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const reviewText = reviewTextarea.value.trim();
+
+                if (!reviewText) {
+                    reviewMessage.textContent = 'Пожалуйста, напишите ваш отзыв.';
+                    reviewMessage.style.color = 'red';
+                    return;
+                }
+                if (!currentUserId) {
+                    reviewMessage.textContent = 'Для отправки отзыва необходимо войти в систему.';
+                    reviewMessage.style.color = 'red';
+                    // Можно добавить перенаправление на страницу входа: window.location.href = '/login';
+                    return;
+                }
+
+                fetch('/reviews/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-User-ID': currentUserId
+                    },
+                    body: JSON.stringify({ text: reviewText })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.message || `Ошибка ${response.status}`) });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    reviewMessage.textContent = data.message || 'Отзыв успешно добавлен!';
+                    reviewMessage.style.color = 'green';
+                    reviewTextarea.value = ''; // Очищаем текстовое поле
+                    loadReviews(); // Обновляем список отзывов
+                    setTimeout(() => { reviewMessage.textContent = ''; }, 5000); // Убираем сообщение через 5 секунд
+                })
+                .catch(error => {
+                    reviewMessage.textContent = 'Ошибка: ' + error.message;
+                    reviewMessage.style.color = 'red';
+                    console.error('Ошибка при добавлении отзыва:', error);
+                });
+            });
+        }
+
+        // Загрузка исполнителей
+        const artistsGridContainer = document.getElementById('artists-grid-container');
+        fetch('/artists')
+            .then(response => response.json())
+            .then(artists => {
+                if (artists.length === 0) {
+                    artistsGridContainer.innerHTML = '<p>Исполнителей пока нет.</p>';
+                    return;
+                }
+                artists.forEach(artist => {
+                    const artistCard = document.createElement('div');
+                    artistCard.classList.add('artist-card');
+
+                    const profileLink = document.createElement('a');
+                    // Используем dashboard.html с параметром для отображения профиля
+                    profileLink.href = `/dashboard?view_user_id=${artist.id}`;
+
+                    const artistImg = document.createElement('img');
+                    artistImg.src = artist.profile_picture || '/static/img/default_avatar.png';
+                    artistImg.alt = artist.name;
+
+                    const artistName = document.createElement('h3');
+                    artistName.textContent = artist.name;
+
+                    profileLink.appendChild(artistImg);
+                    profileLink.appendChild(artistName);
+                    artistCard.appendChild(profileLink);
+                    artistsGridContainer.appendChild(artistCard);
+                });
+            })
+            .catch(error => {
+                console.error('Ошибка при загрузке исполнителей:', error);
+                artistsGridContainer.innerHTML = '<p>Не удалось загрузить список исполнителей.</p>';
+            });
+
+        // Загрузка медиа для карусели
+        const mediaCarouselSlider = document.getElementById('media-carousel-slider');
+        const mediaPrevButton = document.getElementById('media-prev');
+        const mediaNextButton = document.getElementById('media-next');
+        let currentMediaIndex = 0;
+        let mediaItems = [];
+
+        function renderMediaCarousel() {
+            mediaCarouselSlider.innerHTML = '';
+            if (mediaItems.length === 0) {
+                mediaCarouselSlider.innerHTML = '<p>Медиафайлов пока нет.</p>';
+                mediaPrevButton.style.display = 'none';
+                mediaNextButton.style.display = 'none';
+                return;
+            }
+            
+            mediaPrevButton.style.display = 'block';
+            mediaNextButton.style.display = 'block';
+
+            mediaItems.forEach((item, index) => {
+                const mediaElementContainer = document.createElement('div');
+                mediaElementContainer.classList.add('media-carousel-item');
+                if (index !== currentMediaIndex) {
+                    mediaElementContainer.style.display = 'none';
+                }
+
+                if (item.media_type === 'image') {
+                    const img = document.createElement('img');
+                    img.src = item.file_path; // Путь уже должен быть правильным от сервера
+                    img.alt = "Галерея KatarEra";
+                    mediaElementContainer.appendChild(img);
+                } else if (item.media_type === 'video') {
+                    const video = document.createElement('video');
+                    video.src = item.file_path;
+                    video.controls = true;
+                    // video.autoplay = true; // Осторожно с автоплеем
+                    // video.muted = true;    // Если автоплей, то лучше с Muted
+                    // video.loop = true;
+                    mediaElementContainer.appendChild(video);
+                }
+                mediaCarouselSlider.appendChild(mediaElementContainer);
+            });
+        }
+
+        function showMedia(index) {
+            currentMediaIndex = (index + mediaItems.length) % mediaItems.length;
+            renderMediaCarousel();
+        }
+
+        mediaPrevButton.addEventListener('click', () => {
+            showMedia(currentMediaIndex - 1);
+        });
+
+        mediaNextButton.addEventListener('click', () => {
+            showMedia(currentMediaIndex + 1);
+        });
+        
+        fetch('/homepage-media')
+            .then(response => response.json())
+            .then(data => {
+                mediaItems = data;
+                showMedia(0); // Показываем первый слайд
+            })
+            .catch(error => {
+                console.error('Ошибка загрузки медиа для главной страницы:', error);
+                mediaCarouselSlider.innerHTML = '<p>Не удалось загрузить медиа.</p>';
+                mediaPrevButton.style.display = 'none';
+                mediaNextButton.style.display = 'none';
+            });
+
+    </script>
+</body>
+</html>

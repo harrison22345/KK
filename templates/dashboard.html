@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль - KatarEra</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        header {
+            background-color: #fff;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        #dashboard {
+            padding-top: 30px;
+            padding-bottom: 60px;
+        }
+
+        .profile-header {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative; /* For follow button positioning */
+        }
+
+        #user-profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 30px;
+            border: 3px solid #fff;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+        }
+
+        .profile-info-text {
+            flex-grow: 1;
+        }
+
+        #profile-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111;
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+        
+        #user-name-display { /* New span for artist name if different from profile title */
+            font-size: 28px;
+            font-weight: 700;
+            color: #111;
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+
+        #user-bio {
+            font-size: 15px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        #user-email-display { /* For displaying email if needed, can be styled or hidden */
+             font-size: 14px;
+             color: #777;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 20px; /* Расстояние между элементами статистики */
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+        .profile-stats span {
+            font-weight: 600;
+        }
+        .profile-stats a {
+            text-decoration: none;
+            color: inherit; /* Inherit color from parent <p> */
+        }
+        .profile-stats a:hover {
+            text-decoration: underline; /* Underline on hover for affordance */
+            color: #ff5500; /* Optional: highlight color on hover */
+        }
+
+        #follow-unfollow-btn {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background-color: #ff5500; /* SoundCloud orange */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        #follow-unfollow-btn:hover {
+            background-color: #cc4400;
+        }
+
+        .profile-section {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .profile-section h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .track-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .track-table th, .track-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        .track-table th {
+            font-weight: 600;
+            color: #555;
+            background-color: #f9f9f9;
+        }
+        .track-table td {
+            color: #333;
+        }
+
+        .track-table tbody tr:hover {
+            background-color: #fcfcfc;
+        }
+        
+        .track-table td:first-child {
+            font-weight: 500;
+        }
+        .button-small {
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: #6c757d;
+        }
+        .button-small:hover {
+            background-color: #5a6268;
+        }
+
+
+        #upload-button {
+            background-color: #111;
+            color: white;
+            margin-bottom: 15px;
+        }
+        #upload-button:hover {
+            background-color: #333;
+        }
+
+        #upload-form-container {
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 6px;
+            background-color: #fdfdfd;
+        }
+        .form-group label {
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="file"],
+        .form-group select {
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 14px;
+        }
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group select:focus {
+            border-color: #ff5500;
+            box-shadow: 0 0 0 2px rgba(255, 85, 0, 0.2);
+        }
+        #upload-form button[type="submit"] {
+            background-color: #ff5500;
+        }
+         #upload-form button[type="submit"]:hover {
+            background-color: #cc4400;
+        }
+
+        /* Стили для SoundCloud-подобного отображения треков */
+        .soundcloud-tracks-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Адаптивная сетка */
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .soundcloud-track-item {
+            background-color: #fff;
+            border-radius: 6px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.2s ease-in-out;
+        }
+        .soundcloud-track-item:hover {
+            transform: translateY(-3px);
+        }
+
+        .track-item-artwork-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
+            background-color: #e9e9e9; /* Placeholder color */
+        }
+
+        .track-item-artwork {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .track-item-play-overlay-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .soundcloud-track-item:hover .track-item-play-overlay-button {
+            opacity: 1;
+        }
+
+        .track-item-info {
+            padding: 12px 15px;
+        }
+
+        .track-item-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 4px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track-item-artist {
+            font-size: 13px;
+            color: #777;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/"><img src="/static/img/logo.png" alt="KatarEra" id="logo"></a>
+            <nav>
+                <ul>
+                    <li><a href="/#about">О нас</a></li>
+                    <li><a href="/#reviews">Отзывы</a></li>
+                    <li><a href="/#artists-section">Исполнители</a></li>
+                    <li><a href="/#media">Медиа</a></li>
+                    <li><a href="/login" id="header-login-link">Вход</a></li>
+                    <li><a href="/register" id="header-register-link">Регистрация</a></li>
+                    <li><a href="#" id="logout-link" style="display: none;">Выход</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <section id="dashboard">
+            <div class="container">
+                
+                <div class="profile-header">
+                    <img id="user-profile-picture" src="/static/img/default_avatar.png" alt="Фото профиля">
+                    <div class="profile-info-text">
+                        <h2 id="profile-title">[Имя Профиля]</h2> 
+                        <p id="user-bio">[Описание пользователя]</p>
+                        <p id="user-email-display" style="display:none;">Почта: <span id="user-email"></span></p>
+                        <div class="profile-stats">
+                            <p><a href="#" id="followers-link" title="Посмотреть подписчиков">Подписчики: <span id="followers-count">0</span></a></p>
+                            <p><a href="#" id="following-link" title="Посмотреть подписки">Подписки: <span id="following-count">0</span></a></p>
+                        </div>
+                    </div>
+                    <button id="follow-unfollow-btn" class="button" style="display: none;">Подписаться</button>
+                </div>
+
+                <div id="music-player-container" class="profile-section" style="display:none; margin-top: 20px;">
+                    <h3>Сейчас играет: <span id="current-track-title"></span></h3>
+                    <audio id="audio-player" controls style="width: 100%; margin-top:10px;"></audio>
+                </div>
+
+                <section id="tracks" class="profile-section">
+                    <h3>Треки</h3>
+                    <!-- Таблица для своего профиля -->
+                    <table class="track-table" id="user-tracks-table" style="display: none;">
+                        <thead id="user-tracks-table-head">
+                            <tr>
+                                <!-- Добавляем столбец для кнопки Play -->
+                                <th>Название</th>
+                                <th>Исполнитель</th>
+                                <th>Дата загрузки</th>
+                                <th>Длительность</th>
+                                <th>Статус</th>
+                                <th>Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody id="track-list">
+                            <!-- Треки будут загружены сюда -->
+                        </tbody>
+                    </table>
+                    <!-- SoundCloud-подобный вид для чужих профилей -->
+                    <div id="soundcloud-track-display" class="soundcloud-tracks-container" style="display: none;">
+                        <!-- Карточки треков будут загружены сюда -->
+                    </div>
+                </section>
+
+                <section id="upload" class="profile-section" style="display: none;">
+                    <h3>Загрузить новый трек</h3>
+                    <p>Для загрузки трека необходимо:</p>
+                    <ol>
+                        <li>Выбрать аудиофайл (mp3, wav).</li>
+                        <li>Указать название трека и имя исполнителя.</li>
+                        <li>Выбрать жанр.</li>
+                        <li>(Опционально) Загрузить обложку для трека.</li>
+                    </ol>
+                    <button id="upload-button" class="button">Показать/скрыть форму загрузки</button>
+                    <div id="upload-form-container" style="display: none;">
+                        <form id="upload-form">
+                            <div class="form-group">
+                                <label for="track-name-input">Название трека:</label>
+                                <input type="text" id="track-name-input" name="track-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="track-artist-input">Исполнитель:</label>
+                                <input type="text" id="track-artist-input" name="track-artist" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="track-genre-select">Жанр:</label>
+                                <select id="track-genre-select" name="genre_id" required>
+                                    <option value="">Выберите жанр</option>
+                                    <!-- Жанры будут загружены сюда JS -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="track-file-input">Файл трека (mp3, wav):</label>
+                                <input type="file" id="track-file-input" name="track-file" accept=".mp3,.wav" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="track-artwork-input">Обложка трека (опционально):</label>
+                                <input type="file" id="track-artwork-input" name="track-artwork" accept="image/*">
+                            </div>
+                            <!-- Поле для длительности удалено, т.к. она определяется автоматически -->
+                            <button type="submit" class="button">Загрузить трек</button>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 KatarEra. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+    (function() {
+        const userId = localStorage.getItem('user_id');
+        const isAdmin = localStorage.getItem('is_admin'); // '1' для админа, '0' или null для других
+
+        if (!userId) {
+            // Если пользователь не вошел в систему, перенаправить на страницу входа
+            window.location.href = '/login';
+        } else if (isAdmin === '1') {
+            // Если пользователь является администратором, перенаправить на панель администратора
+            window.location.href = '/admin';
+        }
+        // Если пользователь вошел и не является администратором, он остается на /dashboard
+    })();
+</script>
+
+    <script>
+        const loggedInUserId = localStorage.getItem('user_id');
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewUserIdParam = urlParams.get('view_user_id');
+
+        let targetUserId = loggedInUserId; 
+        let isOwnProfile = true;
+
+        if (viewUserIdParam && viewUserIdParam !== loggedInUserId) {
+            targetUserId = viewUserIdParam;
+            isOwnProfile = false;
+        } else if (viewUserIdParam && viewUserIdParam === loggedInUserId) {
+            // isOwnProfile = true, targetUserId = loggedInUserId
+        } else if (!loggedInUserId && viewUserIdParam) {
+            targetUserId = viewUserIdParam;
+            isOwnProfile = false;
+        } else if (!loggedInUserId && !viewUserIdParam) {
+            window.location.href = "/login";
+            throw new Error("Пользователь не аутентифицирован и не указан профиль для просмотра.");
+        }
+
+        const userNameDisplayElem = document.getElementById('user-name'); // This was for the old structure
+        const userEmailElem = document.getElementById('user-email');
+        const userBioElem = document.getElementById('user-bio');
+        const userProfilePictureElem = document.getElementById('user-profile-picture');
+        const profileTitleElem = document.getElementById('profile-title');
+        const trackListElem = document.getElementById('track-list');
+        const uploadSectionElem = document.getElementById('upload');
+        const uploadButtonElem = document.getElementById('upload-button');
+        const uploadFormContainerElem = document.getElementById('upload-form-container');
+        const trackGenreSelectElem = document.getElementById('track-genre-select'); 
+        const followUnfollowBtnElem = document.getElementById('follow-unfollow-btn');
+        
+        const userTracksTableElem = document.getElementById('user-tracks-table');
+        const soundcloudTrackDisplayElem = document.getElementById('soundcloud-track-display');
+
+        const logoutLinkElem = document.getElementById('logout-link');
+        const headerLoginLinkElem = document.getElementById('header-login-link');
+        const headerRegisterLinkElem = document.getElementById('header-register-link');
+        const userEmailDisplayContainer = document.getElementById('user-email-display');
+        const followersCountElem = document.getElementById('followers-count');
+        const followingCountElem = document.getElementById('following-count');
+
+
+
+        if (loggedInUserId) {
+            if(logoutLinkElem) logoutLinkElem.style.display = 'inline';
+            if(headerLoginLinkElem) headerLoginLinkElem.style.display = 'none';
+            if(headerRegisterLinkElem) headerRegisterLinkElem.style.display = 'none';
+        } else {
+            if(logoutLinkElem) logoutLinkElem.style.display = 'none';
+            if(headerLoginLinkElem) headerLoginLinkElem.style.display = 'inline';
+            if(headerRegisterLinkElem) headerRegisterLinkElem.style.display = 'inline';
+        }
+
+        if (uploadButtonElem) {
+            uploadButtonElem.addEventListener('click', () => {
+                if (uploadFormContainerElem) {
+                    uploadFormContainerElem.style.display = uploadFormContainerElem.style.display === 'none' ? 'block' : 'none';
+                }
+            });
+        }
+        if (logoutLinkElem) {
+            logoutLinkElem.addEventListener('click', (event) => {
+                event.preventDefault();
+                localStorage.removeItem('user_id');
+                localStorage.removeItem('is_admin'); 
+                window.location.href = "/login";
+            });
+        }
+
+        function loadUserData() {
+            if (!targetUserId) {
+                console.error("Target User ID не определен для загрузки данных пользователя.");
+                if (profileTitleElem) profileTitleElem.textContent = "Ошибка: Профиль не найден";
+                return;
+            }
+
+            fetch(`/user?user_id=${targetUserId}`)
+                .then(response => {
+                    if (response.status === 404) {
+                        if (profileTitleElem) profileTitleElem.textContent = "Профиль не найден";
+                        // alert("Профиль пользователя не найден."); // Consider removing alert if title is updated
+                        if (!isOwnProfile) window.location.href = "/"; 
+                        throw new Error('Профиль не найден.');
+                    }
+                    if (isOwnProfile && (response.status === 401 || response.status === 403)) { 
+                        localStorage.removeItem('user_id');
+                        window.location.href = "/login";
+                        throw new Error('Неавторизованный доступ к данным пользователя.');
+                    }
+                    if (!response.ok) throw new Error(`Не удалось загрузить данные пользователя. Статус: ${response.status}`);
+                    return response.json();
+                })
+                .then(user => {
+                    // Используем profileTitleElem для имени исполнителя в шапке профиля
+                    if(profileTitleElem) profileTitleElem.textContent = user.name || 'Исполнитель без имени';
+                    
+                    if(userBioElem) userBioElem.textContent = user.bio || 'Описание отсутствует.';
+                    if (userProfilePictureElem) {
+                        userProfilePictureElem.src = user.profile_picture ? user.profile_picture : '/static/img/default_avatar.png';
+                    }
+                    // Отображение email только для своего профиля (опционально)
+                    if (isOwnProfile && userEmailElem && userEmailDisplayContainer) {
+                        userEmailElem.textContent = user.email;
+                        userEmailDisplayContainer.style.display = 'block';
+                    } else if (userEmailDisplayContainer) {
+                         userEmailDisplayContainer.style.display = 'none';
+                    }
+
+                    // Отображение количества подписчиков и подписок
+                    if(followersCountElem) followersCountElem.textContent = user.followers_count || 0;
+                    if(followingCountElem) followingCountElem.textContent = user.following_count || 0;
+
+                    const followersLinkElem = document.getElementById('followers-link');
+                    const followingLinkElem = document.getElementById('following-link');
+
+                    if (followersLinkElem) {
+                        followersLinkElem.href = `/user/${targetUserId}/followers_list`;
+                    }
+                    if (followingLinkElem) {
+                        followingLinkElem.href = `/user/${targetUserId}/following_list`;
+                    }
+
+                    if (isOwnProfile) {
+                        // profileTitleElem уже установлен как "Мой профиль" или имя пользователя
+                        if(uploadSectionElem) uploadSectionElem.style.display = 'block';
+                        if(userTracksTableElem) userTracksTableElem.style.display = ''; // Показать таблицу
+                        if(soundcloudTrackDisplayElem) soundcloudTrackDisplayElem.style.display = 'none'; // Скрыть SoundCloud вид
+                        if(followUnfollowBtnElem) followUnfollowBtnElem.style.display = 'none';
+                    } else {
+                        // profileTitleElem уже установлен как имя просматриваемого пользователя
+                        if(uploadSectionElem) uploadSectionElem.style.display = 'none';
+                        if(userTracksTableElem) userTracksTableElem.style.display = 'none'; // Скрыть таблицу
+                        if(soundcloudTrackDisplayElem) soundcloudTrackDisplayElem.style.display = 'grid'; // Показать SoundCloud вид (grid)
+
+                        if (loggedInUserId && followUnfollowBtnElem) { 
+                            followUnfollowBtnElem.style.display = 'block';
+                            checkFollowStatus();
+                        } else if (followUnfollowBtnElem) {
+                            followUnfollowBtnElem.style.display = 'none';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error("Ошибка при загрузке данных пользователя:", error.message);
+                    if (!error.message.includes('Неавторизованный') && !error.message.includes('Профиль не найден')) {
+                        if (profileTitleElem) profileTitleElem.textContent = "Ошибка загрузки профиля";
+                    }
+                });
+        }
+
+        function loadUserTracks() {
+            if (!targetUserId) {
+                console.error("Target User ID не определен для загрузки треков.");
+                if(isOwnProfile && trackListElem) trackListElem.innerHTML = '<tr><td colspan="6">Не удалось загрузить треки: ID пользователя не указан.</td></tr>';
+                else if (!isOwnProfile && soundcloudTrackDisplayElem) soundcloudTrackDisplayElem.innerHTML = '<p>Не удалось загрузить треки: ID пользователя не указан.</p>';
+                return;
+            }
+            fetch(`/user/tracks?user_id=${targetUserId}`)
+                .then(response => {
+                    if ((response.status === 401 || response.status === 403) && isOwnProfile) { // Проверка на свой профиль для редиректа
+                        localStorage.removeItem('user_id');
+                        window.location.href = "/login";
+                        throw new Error('Неавторизованный доступ к трекам пользователя.');
+                    }
+                    if (!response.ok) throw new Error(`Не удалось загрузить треки пользователя. Статус: ${response.status}`);
+                    return response.json();
+                })
+                .then(tracks => {
+                    if (isOwnProfile) {
+                        if(trackListElem) trackListElem.innerHTML = ''; 
+                        if (tracks.length === 0) {
+                            if(trackListElem) trackListElem.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">У этого пользователя пока нет треков.</td></tr>';
+                            return;
+                        }
+                        tracks.forEach(track => {
+                            const row = trackListElem.insertRow();
+                            row.insertCell().textContent = track.title;
+                            row.insertCell().textContent = track.artist;
+                            row.insertCell().textContent = track.upload_date ? new Date(track.upload_date).toLocaleDateString() : 'N/A';
+                            row.insertCell().textContent = formatDuration(track.duration); 
+                            const statusCell = row.insertCell();
+                            statusCell.textContent = track.status;
+
+                            const playCell = row.insertCell();
+                            if (track.status === 'approved' && track.file_path) {
+                                const playButton = document.createElement('button');
+                                playButton.textContent = '▶️ Play';
+                                playButton.classList.add('button', 'button-small');
+                                playButton.onclick = function() { playTrack(track); };
+                                playCell.appendChild(playButton);
+                            } else {
+                                playCell.textContent = '-';
+                            }
+                        });
+                    } else { // Отображение для чужого профиля (SoundCloud-like)
+                        if(soundcloudTrackDisplayElem) soundcloudTrackDisplayElem.innerHTML = '';
+                        const approvedTracks = tracks.filter(t => t.status === 'approved' && t.file_path);
+
+                        if (approvedTracks.length === 0) {
+                            if(soundcloudTrackDisplayElem) soundcloudTrackDisplayElem.innerHTML = '<p style="text-align:center; padding: 20px; grid-column: 1 / -1;">У этого пользователя пока нет треков.</p>';
+                            return;
+                        }
+
+                        approvedTracks.forEach(track => {
+                            const trackItem = document.createElement('div');
+                            trackItem.className = 'soundcloud-track-item';
+
+                            const artworkWrapper = document.createElement('div');
+                            artworkWrapper.className = 'track-item-artwork-wrapper';
+
+                            const artworkImg = document.createElement('img');
+                            artworkImg.className = 'track-item-artwork';
+                            let artworkSrc = track.artwork_path ? track.artwork_path : '/static/img/default_track_artwork.png'; // Нужна дефолтная обложка
+                            if (track.artwork_path) {
+                                if (artworkSrc.startsWith('uploads/') || artworkSrc.startsWith('uploads\\')) {
+                                    artworkSrc = '/' + artworkSrc.replace(/\\/g, '/');
+                                } else {
+                                    artworkSrc = '/uploads/' + artworkSrc.replace(/\\/g, '/');
+                                }
+                            }
+                            artworkImg.src = artworkSrc;
+                            artworkImg.alt = `Обложка трека ${track.title}`;
+
+                            const playOverlayButton = document.createElement('button');
+                            playOverlayButton.className = 'track-item-play-overlay-button';
+                            playOverlayButton.innerHTML = '▶️';
+                            playOverlayButton.onclick = function() { playTrack(track); };
+
+                            artworkWrapper.appendChild(artworkImg);
+                            artworkWrapper.appendChild(playOverlayButton);
+
+                            const trackInfoDiv = document.createElement('div');
+                            trackInfoDiv.className = 'track-item-info';
+
+                            const titleElem = document.createElement('h4');
+                            titleElem.className = 'track-item-title';
+                            titleElem.textContent = track.title;
+
+                            const artistElem = document.createElement('p');
+                            artistElem.className = 'track-item-artist';
+                            artistElem.textContent = track.artist;
+
+                            trackInfoDiv.appendChild(titleElem);
+                            trackInfoDiv.appendChild(artistElem);
+
+                            trackItem.appendChild(artworkWrapper);
+                            trackItem.appendChild(trackInfoDiv);
+                            if(soundcloudTrackDisplayElem) soundcloudTrackDisplayElem.appendChild(trackItem);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Ошибка при загрузке треков пользователя:", error.message);
+                    if(isOwnProfile && trackListElem) trackListElem.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px;">Ошибка загрузки треков.</td></tr>`;
+                    else if (!isOwnProfile && soundcloudTrackDisplayElem) soundcloudTrackDisplayElem.innerHTML = '<p style="text-align:center; padding: 20px;">Ошибка загрузки треков.</p>';
+                });
+        }
+
+        function playTrack(track) {
+            const audioPlayer = document.getElementById('audio-player');
+            const currentTrackTitleElem = document.getElementById('current-track-title');
+            const playerContainer = document.getElementById('music-player-container');
+
+            if (audioPlayer && currentTrackTitleElem && playerContainer) {
+                let trackSrc = track.file_path;
+                if (trackSrc.startsWith('uploads/') || trackSrc.startsWith('uploads\\')) {
+                    trackSrc = '/' + trackSrc.replace(/\\/g, '/');
+                } else {
+                    trackSrc = '/uploads/' + trackSrc.replace(/\\/g, '/');
+                }
+
+                audioPlayer.src = trackSrc;
+                currentTrackTitleElem.textContent = `${track.title} - ${track.artist}`;
+                playerContainer.style.display = 'block';
+                audioPlayer.play();
+            }
+        }
+
+        function formatDuration(seconds) {
+            if (isNaN(seconds) || seconds === null || typeof seconds === 'undefined') return 'N/A';
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+        }
+
+        function loadGenres() {
+            if (!trackGenreSelectElem) return; 
+            fetch('/genres')
+                .then(response => response.json())
+                .then(genres => {
+                    trackGenreSelectElem.innerHTML = '<option value="">Выберите жанр</option>'; 
+                    genres.forEach(genre => {
+                        const option = document.createElement('option');
+                        option.value = genre.id;
+                        option.textContent = genre.name;
+                        trackGenreSelectElem.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error("Ошибка при загрузке жанров:", error.message);
+                });
+        }
+
+        const uploadFormElem = document.getElementById('upload-form');
+        if (uploadFormElem) {
+            uploadFormElem.addEventListener('submit', function(event) {
+                event.preventDefault();
+                if (!loggedInUserId) {
+                    alert('Для загрузки треков необходимо войти в систему.');
+                    window.location.href = "/login";
+                    return;
+                }
+
+                const formData = new FormData(this);
+                const trackFile = formData.get('track-file'); 
+
+                if (!trackFile || trackFile.size === 0) {
+                    alert('Пожалуйста, выберите файл трека.');
+                    return;
+                }
+                
+                const headers = {};
+                if (loggedInUserId) { 
+                     headers['X-User-ID'] = loggedInUserId;
+                }
+
+                fetch('/user/tracks/upload', {
+                    method: 'POST',
+                    body: formData,
+                    headers: headers
+                })
+                .then(response => {
+                    if (response.status === 401 || response.status === 403) {
+                        localStorage.removeItem('user_id');
+                        window.location.href = "/login";
+                        throw new Error('Неавторизовано: Невозможно загрузить трек.');
+                    }
+                    if (response.ok) {
+                        alert('Трек успешно загружен и отправлен на проверку!');
+                        loadUserTracks(); 
+                        this.reset(); 
+                        if(uploadFormContainerElem) uploadFormContainerElem.style.display = 'none'; 
+                    } else {
+                        response.text().then(text => {
+                            alert(`Ошибка при загрузке трека: ${text || response.statusText}`);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Ошибка при загрузке трека:", error.message);
+                    if (!error.message.includes('Неавторизовано')) {
+                        alert('Произошла ошибка при попытке загрузить трек.');
+                    }
+                });
+            });
+        }
+
+
+        function checkFollowStatus() {
+            if (!loggedInUserId || !targetUserId || isOwnProfile || !followUnfollowBtnElem) {
+                if(followUnfollowBtnElem) followUnfollowBtnElem.style.display = 'none';
+                return;
+            }
+            fetch(`/user/is_following/${targetUserId}`, {
+                headers: { 'X-User-ID': loggedInUserId }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.is_following) {
+                    followUnfollowBtnElem.textContent = 'Отписаться';
+                    followUnfollowBtnElem.dataset.action = 'unfollow';
+                } else {
+                    followUnfollowBtnElem.textContent = 'Подписаться';
+                    followUnfollowBtnElem.dataset.action = 'follow';
+                }
+                followUnfollowBtnElem.style.display = 'block';
+            })
+            .catch(error => console.error('Ошибка проверки статуса подписки:', error));
+        }
+
+        if (followUnfollowBtnElem) {
+            followUnfollowBtnElem.addEventListener('click', () => {
+                if (!loggedInUserId || !targetUserId || isOwnProfile) return;
+
+                const action = followUnfollowBtnElem.dataset.action;
+                const url = `/user/${targetUserId}/${action}`;
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-User-ID': loggedInUserId,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {throw new Error(err.message || `Ошибка: ${response.status}`)});
+                                    }
+                    return response.json();
+                })
+                .then(data => {
+                    checkFollowStatus(); 
+                })
+                .catch(error => {
+                    alert(`Не удалось выполнить действие: ${error.message}`);
+                    console.error(`Ошибка при ${action}:`, error);
+                });
+            });
+        }
+
+        loadUserData();
+        loadUserTracks();
+        if (isOwnProfile) { 
+           loadGenres();
+        }
+
+     </script>
+ </body>
+ </html>

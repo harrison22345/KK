@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - KatarEra</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/"><img src="/static/img/logo.png" alt="KatarEra" id="logo"></a>
+            <nav>
+                <ul>
+                    <li><a href="/login">Вход</a></li>
+                    <li></li><a href="/register">Зарегистрироваться</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <style>
+        #logo {
+            max-height: 75px; 
+            vertical-align: middle;
+        }
+    </style>
+
+    <main>
+        <section id="login">
+            <div class="container">
+                <h2>Вход в KatarEra</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email">Почта:</label>
+                        <input type="email" id="email" name="email" required placeholder="Введите вашу почту">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Пароль:</label>
+                        <input type="password" id="password" name="password" required placeholder="Введите ваш пароль">
+                    </div>
+                    <button type="submit" class="button">Войти</button>
+                </form>
+                <p>Еще нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 KatarEra. Все права защищены.</p>
+        </div>
+    </footer>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Предотвращаем отправку формы по умолчанию
+
+            // Получаем значения полей
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Отправляем данные на сервер для проверки (AJAX)
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: email, password: password })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json().then(data => { // Возвращаем промис для цепочки
+                        localStorage.setItem('user_id', data.id); // Сохраняем ID для всех
+                        if (data.is_admin == 1) {
+                            localStorage.setItem('is_admin', '1'); // Сохраняем флаг админа
+                            alert("Вход выполнен успешно! Перенаправление в панель администратора.");
+                            window.location.href = "/admin";
+                        } else {
+                            localStorage.removeItem('is_admin'); // Удаляем флаг админа для обычных пользователей
+                            alert("Вход выполнен успешно! Перенаправление в личный кабинет.");
+                            window.location.href = "/dashboard"; 
+                        }
+                    });
+                } else if (response.status === 400) {
+                    return response.text().then(errorMessage => { // Возвращаем промис
+                        alert(errorMessage || "Неверная почта или пароль.");
+                    });
+                } else if (response.status === 401) {
+                    return response.text().then(errorMessage => { // Возвращаем промис
+                        alert(errorMessage || "Ошибка аутентификации. Возможно, требуется подтверждение почты.");
+                    });
+                }
+                else {
+                    // Для других ошибок сервера
+                    alert("Произошла ошибка при входе. Статус: " + response.status);
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка входа:', error);
+                alert("Не удалось подключиться к серверу или произошла другая ошибка. Пожалуйста, попробуйте снова.");
+            });
+        });
+    </script>
+</body>
+</html>

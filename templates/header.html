@@ -1,0 +1,29 @@
+<header>
+    <div class="container">
+        <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="KatarEra" id="logo-header-pages" style="max-height: 50px; vertical-align: middle;"></a>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}#about">О нас</a></li>
+                <li><a href="{{ url_for('index') }}#reviews">Отзывы</a></li>
+                <li><a href="{{ url_for('index') }}#artists-section">Исполнители</a></li>
+                <li><a href="{{ url_for('index') }}#media">Медиа</a></li>
+                {# Эти ссылки лучше сделать динамическими на основе статуса пользователя,
+                   но для простоты пока оставим так.
+                   На главной странице KatarEra.html у вас есть JS для этого.
+                   Здесь можно либо передавать статус пользователя в контекст,
+                   либо также использовать JS, если эти страницы будут его подключать. #}
+                <li id="nav-login-link-container"><a href="{{ url_for('login_page') }}" id="nav-login-link">Вход</a></li>
+                <li id="nav-register-link-container"><a href="{{ url_for('register_page') }}" id="nav-register-link">Регистрация</a></li>
+                <li id="nav-dashboard-link-container" style="display: none;"><a href="{{ url_for('dashboard_page') }}" id="nav-dashboard-link">Личный кабинет</a></li>
+                <li id="nav-logout-link-container" style="display: none;"><a href="#" id="nav-logout-link">Выход</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<script>
+    // Простой скрипт для управления ссылками в header на других страницах
+    // Он должен быть адаптирован или заменен более сложной логикой, если потребуется
+    // такая же динамика, как на KatarEra.html
+    // Этот скрипт предполагает, что localStorage уже установлен при входе/выходе
+    // и что dashboard_page ведет на /admin для админов (это должно быть обработано на стороне сервера или JS на dashboard)
+</script>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация - KatarEra</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/"><img src="/static/img/logo.png" alt="KatarEra" id="logo"></a>
+            <nav>
+                <ul>
+                    <li></li><a href="/login">Войти</a></li>
+                    <li><a href="/register">Регистрация</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <style>
+        #logo {
+            max-height: 75px; 
+            vertical-align: middle;
+        }
+    </style>
+
+    <main>
+        <section id="register">
+            <div class="container">
+                <h2>Регистрация в KatarEra</h2>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="email">Почта:</label>
+                        <input type="email" id="email" name="email" required placeholder="Введите вашу почту">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Пароль:</label>
+                        <input type="password" id="password" name="password" required placeholder="Введите ваш пароль">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">Подтверждение пароля:</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required placeholder="Подтвердите ваш пароль">
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Имя:</label>
+                        <input type="text" id="name" name="name" placeholder="Введите ваше имя">
+                    </div>
+                    <div class="form-group">
+                        <label for="bio">Описание:</label>
+                        <textarea id="bio" name="bio" placeholder="Расскажите о себе"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile_picture">Фото профиля:</label>
+                        <input type="file" id="profile_picture" name="profile_picture" accept="image/*">
+                    </div>
+                    <button type="submit" class="button">Зарегистрироваться</button>
+                </form>
+                <p>Уже есть аккаунт? <a href="/login">Войти</a></p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 KatarEra. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('register-form').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+
+            // Получаем значения полей
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const name = document.getElementById('name').value;
+            const bio = document.getElementById('bio').value;
+            const profilePicture = document.getElementById('profile_picture').files[0];
+
+            // Проверяем, совпадают ли пароли
+            if (password !== confirmPassword) {
+                alert("Пароли не совпадают!");
+                return; 
+            }
+
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('password', password);
+            formData.append('name', name);
+            formData.append('bio', bio);
+            if (profilePicture) {
+                formData.append('profile_picture', profilePicture);
+            }
+
+            // Отправляем данные на сервер для регистрации (AJAX)
+            fetch('/register', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("Регистрация прошла успешно!");
+                    window.location.href = "/login"; 
+                } else if (response.status === 400) {
+                    response.text().then(errorMessage => {
+                        alert(errorMessage || "Ошибка при регистрации. Попробуйте еще раз.");
+                    });
+                }
+                else {
+                    alert("Ошибка при регистрации. Попробуйте еще раз.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
