@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель администратора - KatarEra</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/"><img src="/static/img/logo.png" alt="KatarEra" id="logo"></a>
+            <nav>
+                <ul>
+                    <li><a href="/admin">Панель администратора</a></li> <!-- Изменено -->
+                    <li><a href="#" id="logout-link-admin">Выход</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <style>
+        #logo {
+            max-height: 75px; 
+            vertical-align: middle;
+        }
+    </style>    
+
+    <main>
+        <section id="admin-dashboard">
+            <div class="container">
+                <h2>Панель администратора</h2>
+
+                <section id="admin-users">
+                    <h3>Пользователи</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Email</th>
+                                <th>Имя</th>
+                                <th>Дата регистрации</th>
+                                <th>Админ</th>
+                                <th>Заблокирован</th>
+                                <th>Почта подтверждена</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-list-admin">
+                            <!-- Данные пользователей будут загружены сюда -->
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="admin-tracks">
+                    <h3>Треки</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Название</th>
+                                <th>Исполнитель</th>
+                                <th>Email пользователя</th>
+                                <th>Статус</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="track-list-admin">
+                            <!-- Данные треков будут загружены сюда -->
+                        </tbody>
+                    </table>
+                    <!-- Плеер для админа -->
+                    <div id="admin-music-player-container" style="display:none; margin-top: 20px; padding: 15px; background-color: #f0f0f0; border-radius: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                        <h4 style="margin-top:0; margin-bottom:10px;">Сейчас играет: <span id="admin-current-track-title" style="font-weight:normal;"></span></h4>
+                        <audio id="admin-audio-player" controls style="width: 100%;"></audio>
+                    </div>
+                    </table>
+                </section>
+
+                <section id="admin-reviews-section">
+                    <h3>Отзывы</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Email пользователя</th>
+                                <th>Текст</th>
+                                <th>Дата</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="review-list-admin">
+                            <!-- Данные отзывов будут загружены сюда -->
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="admin-homepage-media">
+                    <h3>Медиа на главной странице</h3>
+                    <form id="upload-homepage-media-form">
+                        <div class="form-group">
+                            <label for="media-file-upload">Выберите файл (фото или видео):</label>
+                            <input type="file" id="media-file-upload" name="media_file" accept="image/*,video/*" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="media-type-select">Тип медиа:</label>
+                            <select id="media-type-select" name="media_type" required>
+                                <option value="image">Фото</option>
+                                <option value="video">Видео</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="button">Загрузить медиа</button>
+                    </form>
+                    <h4>Загруженные медиа:</h4>
+                    <div id="homepage-media-list" class="media-gallery-admin">
+                        <!-- Загруженные медиа будут здесь -->
+                    </div>
+                </section>
+
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 KatarEra. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+        const userListAdmin = document.getElementById('user-list-admin');
+        const trackListAdmin = document.getElementById('track-list-admin');
+        const reviewListAdmin = document.getElementById('review-list-admin');
+        const logoutLinkAdmin = document.getElementById('logout-link-admin');
+        const homepageMediaList = document.getElementById('homepage-media-list');
+        const uploadHomepageMediaForm = document.getElementById('upload-homepage-media-form');
+
+
+        logoutLinkAdmin.addEventListener('click', (event) => {
+            event.preventDefault();
+            localStorage.removeItem('user_id');
+            localStorage.removeItem('is_admin'); // Удаляем флаг админа
+            window.location.href = "/login";
+        });
+
+        function checkAdmin() {
+            const userId = localStorage.getItem('user_id');
+            const isAdmin = localStorage.getItem('is_admin');
+
+            if (!userId || isAdmin !== '1') {
+                alert('Доступ запрещен. Пожалуйста, войдите как администратор.');
+                window.location.href = "/login";
+                return false;
+            }
+            return true;
+        }
+
+        // Вспомогательная функция для fetch с аутентификацией админа
+        function adminFetch(url, options = {}) {
+            if (!checkAdmin()) {
+                return Promise.reject(new Error("Admin authentication failed."));
+            }
+            const adminUserId = localStorage.getItem('user_id');
+            options.headers = {
+                ...options.headers,
+                'X-User-ID': adminUserId
+            };
+            return fetch(url, options);
+        }
+
+        function loadAdminData() {
+            if (!checkAdmin()) return;
+
+            // Загрузка пользователей
+            adminFetch('/admin/users')
+                .then(response => response.json())
+                .then(users => {
+                    userListAdmin.innerHTML = '';
+                    users.forEach(user => {
+                        const row = userListAdmin.insertRow();
+                        row.insertCell().textContent = user.id;
+                        row.insertCell().textContent = user.email;
+                        row.insertCell().textContent = user.name || 'N/A';
+                        row.insertCell().textContent = new Date(user.registration_date).toLocaleDateString();
+                        row.insertCell().textContent = user.is_admin ? 'Да' : 'Нет';
+                        row.insertCell().textContent = user.is_blocked ? 'Да' : 'Нет';
+                        row.insertCell().textContent = user.is_email_confirmed ? 'Да' : 'Нет';
+                        const actionsCell = row.insertCell();
+                        if (!user.is_blocked) {
+                            const blockButton = document.createElement('button');
+                            blockButton.textContent = 'Заблокировать';
+                            blockButton.classList.add('button', 'button-danger');
+                            blockButton.onclick = () => blockUser(user.id);
+                            actionsCell.appendChild(blockButton);
+                        }
+                    });
+                });
+
+            // Загрузка треков
+            adminFetch('/admin/tracks')
+                .then(response => response.json())
+                .then(tracks => {
+                    trackListAdmin.innerHTML = '';
+                    tracks.forEach(track => {
+                        const row = trackListAdmin.insertRow();
+                        row.insertCell().textContent = track.id;
+                        row.insertCell().textContent = track.title;
+                        row.insertCell().textContent = track.artist;
+                        row.insertCell().textContent = track.user_email;
+                        row.insertCell().textContent = track.status;
+                        const actionsCell = row.insertCell();
+                        if (track.status === 'pending') {
+                            const approveButton = document.createElement('button');
+                            approveButton.textContent = 'Одобрить';
+                            approveButton.classList.add('button');
+                            approveButton.onclick = () => approveTrack(track.id);
+                            actionsCell.appendChild(approveButton);
+
+                            const rejectButton = document.createElement('button');
+                            rejectButton.textContent = 'Отклонить';
+                            rejectButton.classList.add('button', 'button-danger');
+                            rejectButton.onclick = () => rejectTrack(track.id);
+                            actionsCell.appendChild(rejectButton);
+                        }
+                        const deleteTrackButton = document.createElement('button');
+                        deleteTrackButton.textContent = 'Удалить трек';
+                        deleteTrackButton.classList.add('button', 'button-danger');
+                        deleteTrackButton.style.marginLeft = '5px';
+                        deleteTrackButton.onclick = () => deleteTrack(track.id);
+                        actionsCell.appendChild(deleteTrackButton);
+
+                        // Кнопка прослушивания
+                        if (track.file_path) { // Показываем кнопку только если есть файл
+                            const playButton = document.createElement('button');
+                            playButton.textContent = '▶️ Слушать';
+                            playButton.classList.add('button', 'button-small'); // button-small для компактности
+                            playButton.onclick = () => adminPlayTrack(track);
+                            actionsCell.appendChild(playButton);
+                        }
+                    });
+                });
+
+            // Загрузка отзывов
+            adminFetch('/admin/reviews')
+                .then(response => response.json())
+                .then(reviews => {
+                    reviewListAdmin.innerHTML = '';
+                    reviews.forEach(review => {
+                        const row = reviewListAdmin.insertRow();
+                        row.insertCell().textContent = review.id;
+                        row.insertCell().textContent = review.user_email;
+                        row.insertCell().textContent = review.text.substring(0, 100) + (review.text.length > 100 ? '...' : '');
+                        row.insertCell().textContent = new Date(review.date).toLocaleString();
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Удалить отзыв';
+                        deleteButton.classList.add('button', 'button-danger');
+                        deleteButton.onclick = () => deleteReview(review.id);
+                        row.insertCell().appendChild(deleteButton);
+                    });
+                });
+            
+            loadHomepageMedia();
+        }
+
+        function blockUser(userId) {
+            adminFetch(`/admin/users/${userId}/block`, { method: 'POST' })
+                .then(() => loadAdminData());
+        }
+
+        function approveTrack(trackId) {
+            adminFetch(`/admin/tracks/${trackId}/approve`, { method: 'POST' })
+                .then(() => loadAdminData());
+        }
+
+        function rejectTrack(trackId) {
+            const reason = prompt("Укажите причину отклонения (необязательно):", "Трек не соответствует правилам платформы.");
+            const formData = new FormData();
+            if (reason) {
+                formData.append('reason', reason);
+            }
+            adminFetch(`/admin/tracks/${trackId}/reject`, { method: 'POST', body: formData })
+                .then(() => loadAdminData())
+                .catch(err => console.error("Error rejecting track:", err));
+        }
+        
+        function deleteTrack(trackId) {
+            if (!checkAdmin()) return;
+            if (confirm('Вы уверены, что хотите удалить этот трек? Это действие необратимо.')) {
+                fetch(`/admin/tracks/${trackId}/delete`, { method: 'POST' })
+                    .then(response => {
+                        if (response.ok) { // Для adminFetch, проверка checkAdmin уже внутри
+                            alert('Трек удален.');
+                            loadAdminData();
+                        } else {
+                            alert('Ошибка при удалении трека.');
+                        }
+                    });
+            }
+        }
+
+        function deleteReview(reviewId) {
+            if (confirm('Вы уверены, что хотите удалить этот отзыв?')) {
+                adminFetch(`/admin/reviews/${reviewId}/delete`, { method: 'POST' })
+                    .then(response => {
+                        if (response.ok) { // Для adminFetch, проверка checkAdmin уже внутри
+                            alert('Отзыв удален.');
+                            loadAdminData();
+                        } else {
+                            alert('Ошибка при удалении отзыва.');
+                        }
+                    });
+            }
+        }
+
+        function loadHomepageMedia() {
+            adminFetch('/homepage-media') // Используем adminFetch, если этот эндпоинт тоже требует админ прав, иначе обычный fetch
+                .then(response => response.json())
+                .then(mediaItems => {
+                    homepageMediaList.innerHTML = '';
+                    mediaItems.forEach(item => {
+                        const mediaDiv = document.createElement('div');
+                        mediaDiv.classList.add('media-item-admin');
+                        
+                        if (item.media_type === 'image') {
+                            const img = document.createElement('img');
+                            img.src = item.file_path; // Путь уже должен быть правильным от сервера
+                            img.alt = "Homepage Image";
+                            mediaDiv.appendChild(img);
+                        } else if (item.media_type === 'video') {
+                            const video = document.createElement('video');
+                            video.src = item.file_path;
+                            video.controls = true;
+                            mediaDiv.appendChild(video);
+                        }
+                        
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.textContent = 'Удалить';
+                        deleteBtn.classList.add('button', 'button-danger', 'button-small');
+                        deleteBtn.onclick = () => deleteHomepageMedia(item.id);
+                        mediaDiv.appendChild(deleteBtn);
+
+                        homepageMediaList.appendChild(mediaDiv);
+                    });
+                })
+                .catch(error => console.error('Ошибка загрузки медиа для главной:', error));
+        }
+
+        uploadHomepageMediaForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            // adminFetch сама добавит X-User-ID заголовок
+            adminFetch('/admin/homepage-media/upload', {
+                method: 'POST',
+                body: formData
+            })
+
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text || 'Ошибка загрузки медиа') });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message || 'Медиа успешно загружено!');
+                uploadHomepageMediaForm.reset();
+                loadHomepageMedia(); // Обновляем список
+            })
+            .catch(error => {
+                alert(`Ошибка: ${error.message}`);
+                console.error('Ошибка при загрузке медиа:', error);
+            });
+        });
+
+        function deleteHomepageMedia(mediaId) {
+            if (confirm('Вы уверены, что хотите удалить этот медиафайл с главной страницы?')) {
+                adminFetch(`/admin/homepage-media/${mediaId}/delete`, { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Медиафайл удален.');
+                        loadHomepageMedia();
+                    } else {
+                        alert('Ошибка при удалении медиафайла.');
+                    }
+                })
+                .catch(error => console.error('Ошибка удаления медиа:', error));
+            }
+        }
+
+        function adminPlayTrack(track) {
+            const audioPlayer = document.getElementById('admin-audio-player');
+            const currentTrackTitleElem = document.getElementById('admin-current-track-title');
+            const playerContainer = document.getElementById('admin-music-player-container');
+
+            if (audioPlayer && currentTrackTitleElem && playerContainer) {
+                let trackSrc = track.file_path;
+                // Убедимся, что путь начинается с / и использует / в качестве разделителей
+                if (trackSrc.startsWith('uploads/') || trackSrc.startsWith('uploads\\')) {
+                    trackSrc = '/' + trackSrc.replace(/\\/g, '/');
+                } else if (!trackSrc.startsWith('/')) { 
+                    // Если вдруг путь не содержит 'uploads/' и не начинается с '/', добавляем
+                    trackSrc = '/uploads/' + trackSrc.replace(/\\/g, '/');
+                }
+                // Если trackSrc уже корректный (например, /uploads/file.mp3), он не изменится
+
+                audioPlayer.src = trackSrc;
+                currentTrackTitleElem.textContent = `${track.title} - ${track.artist}`;
+                playerContainer.style.display = 'block';
+                audioPlayer.play();
+            }
+        }
+
+
+        // Загрузка данных при загрузке страницы
+        loadAdminData();
+    </script>
+</body>
+</html>
