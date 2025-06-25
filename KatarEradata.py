@@ -309,7 +309,7 @@ def login():
 
         if user['is_blocked']:
             conn.close()
-            abort(403, 'Ваш аккаунт заблокирован. Пожалуйста, свяжитесь с администрацией.')
+            abort(403, 'Ваш аккаунт заблокирован. Пожалуйста, свяжитесь с администрацией по адресу katarexample@gmail.com.')
 
         if bcrypt.checkpw(password.encode('utf-8'), user['password']):
             conn.close()
